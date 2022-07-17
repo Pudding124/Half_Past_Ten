@@ -20,21 +20,21 @@ func isRankExceeded(rank float64) bool {
 	return false
 }
 
-func StartGame(gamers []People, banker *People, decks Deck.Deck) {
+func StartGame(gamers []*People, banker *People, decks Deck.Deck) {
 	// 先均發一張牌
 	deckIndex := 0
 	(*banker).Rank = decks[deckIndex].Rank
 	(*banker).TotalCard += 1
 	deckIndex += 1
 	for index := range gamers {
-		(&gamers[index]).Rank = decks[deckIndex].Rank
-		(&gamers[index]).TotalCard += 1
+		(*gamers[index]).Rank = decks[deckIndex].Rank
+		(*gamers[index]).TotalCard += 1
 		deckIndex += 1
 	}
 
 	choose := ""
 	for index := range gamers {
-		user := &gamers[index]
+		user := *gamers[index]
 		fmt.Println("Gamer: ", user.Owner)
 
 		for true {
@@ -44,7 +44,7 @@ func StartGame(gamers []People, banker *People, decks Deck.Deck) {
 
 			if choose == "Y" {
 				user.Rank += decks[deckIndex].Rank
-				(&gamers[index]).TotalCard += 1
+				(*gamers[index]).TotalCard += 1
 				deckIndex += 1
 
 				if isRankExceeded(user.Rank) {
@@ -88,106 +88,106 @@ func StartGame(gamers []People, banker *People, decks Deck.Deck) {
 	}
 }
 
-func JudgeGame(gamers []People, banker *People) {
+func JudgeGame(gamers []*People, banker *People) {
 	// Rule 1 -> Banker Fail
 	if isRankExceeded((*banker).Rank) {
 		for index := range gamers {
-			if isRankExceeded((&gamers[index]).Rank) == false {
-				(*banker).Money -= 10 * handType(gamers[index])
-				(&gamers[index]).Money += 10 * handType(gamers[index])
+			if isRankExceeded((*gamers[index]).Rank) == false {
+				(*banker).Money -= 10 * handType(*gamers[index])
+				(*gamers[index]).Money += 10 * handType(*gamers[index])
 			}
 		}
 	} else { // Rule 2 -> Banker Success
 		for index := range gamers {
-			if isRankExceeded((&gamers[index]).Rank) { // gamer fail
+			if isRankExceeded((*gamers[index]).Rank) { // gamer fail
 				(*banker).Money += 10 * handType(*banker)
-				(&gamers[index]).Money -= 10 * handType(*banker)
-			} else if (*banker).Rank > (&gamers[index]).Rank { // 莊家大
+				(*gamers[index]).Money -= 10 * handType(*banker)
+			} else if (*banker).Rank > (*gamers[index]).Rank { // 莊家大
 				if handType(*banker) == 1 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
+						(*gamers[index]).Money -= 10 * handType(*banker)
 					} else {
-						(*banker).Money -= 10 * handType(gamers[index])
-						(&gamers[index]).Money += 10 * handType(gamers[index])
+						(*banker).Money -= 10 * handType(*gamers[index])
+						(*gamers[index]).Money += 10 * handType(*gamers[index])
 					}
 				} else if handType(*banker) == 2 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
-					} else if handType(gamers[index]) == 2 {
+						(*gamers[index]).Money -= 10 * handType(*banker)
+					} else if handType(*gamers[index]) == 2 {
 						continue
-					} else if handType(gamers[index]) == 5 {
-						(*banker).Money -= 10 * (handType(gamers[index]) - handType(*banker))
-						(&gamers[index]).Money += 10 * (handType(gamers[index]) - handType(*banker))
+					} else if handType(*gamers[index]) == 5 {
+						(*banker).Money -= 10 * (handType(*gamers[index]) - handType(*banker))
+						(*gamers[index]).Money += 10 * (handType(*gamers[index]) - handType(*banker))
 					}
 				} else if handType(*banker) == 5 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
-					} else if handType(gamers[index]) == 2 {
-						(*banker).Money += 10 * (handType(*banker) - handType(gamers[index]))
-						(&gamers[index]).Money -= 10 * (handType(*banker) - handType(gamers[index]))
-					} else if handType(gamers[index]) == 5 {
+						(*gamers[index]).Money -= 10 * handType(*banker)
+					} else if handType(*gamers[index]) == 2 {
+						(*banker).Money += 10 * (handType(*banker) - handType(*gamers[index]))
+						(*gamers[index]).Money -= 10 * (handType(*banker) - handType(*gamers[index]))
+					} else if handType(*gamers[index]) == 5 {
 						continue
 					}
 				}
-			} else if (*banker).Rank < (&gamers[index]).Rank { // 莊家小
+			} else if (*banker).Rank < (*gamers[index]).Rank { // 莊家小
 				if handType(*banker) == 1 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money -= 10 * handType(*banker)
-						(&gamers[index]).Money += 10 * handType(*banker)
+						(*gamers[index]).Money += 10 * handType(*banker)
 					} else {
-						(*banker).Money -= 10 * handType(gamers[index])
-						(&gamers[index]).Money += 10 * handType(gamers[index])
+						(*banker).Money -= 10 * handType(*gamers[index])
+						(*gamers[index]).Money += 10 * handType(*gamers[index])
 					}
 				} else if handType(*banker) == 2 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
-					} else if handType(gamers[index]) == 2 {
+						(*gamers[index]).Money -= 10 * handType(*banker)
+					} else if handType(*gamers[index]) == 2 {
 						continue
-					} else if handType(gamers[index]) == 5 {
-						(*banker).Money -= 10 * (handType(gamers[index]) - handType(*banker))
-						(&gamers[index]).Money += 10 * (handType(gamers[index]) - handType(*banker))
+					} else if handType(*gamers[index]) == 5 {
+						(*banker).Money -= 10 * (handType(*gamers[index]) - handType(*banker))
+						(*gamers[index]).Money += 10 * (handType(*gamers[index]) - handType(*banker))
 					}
 				} else if handType(*banker) == 5 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
-					} else if handType(gamers[index]) == 2 {
-						(*banker).Money += 10 * (handType(*banker) - handType(gamers[index]))
-						(&gamers[index]).Money -= 10 * (handType(*banker) - handType(gamers[index]))
-					} else if handType(gamers[index]) == 5 {
+						(*gamers[index]).Money -= 10 * handType(*banker)
+					} else if handType(*gamers[index]) == 2 {
+						(*banker).Money += 10 * (handType(*banker) - handType(*gamers[index]))
+						(*gamers[index]).Money -= 10 * (handType(*banker) - handType(*gamers[index]))
+					} else if handType(*gamers[index]) == 5 {
 						continue
 					}
 				}
-			} else if (*banker).Rank == (&gamers[index]).Rank { // 莊家小
+			} else if (*banker).Rank == (*gamers[index]).Rank { // 莊家小
 				if handType(*banker) == 1 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						continue
 					} else {
-						(*banker).Money -= 10 * handType(gamers[index])
-						(&gamers[index]).Money += 10 * handType(gamers[index])
+						(*banker).Money -= 10 * handType(*gamers[index])
+						(*gamers[index]).Money += 10 * handType(*gamers[index])
 					}
 				} else if handType(*banker) == 2 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
-					} else if handType(gamers[index]) == 2 {
+						(*gamers[index]).Money -= 10 * handType(*banker)
+					} else if handType(*gamers[index]) == 2 {
 						continue
-					} else if handType(gamers[index]) == 5 {
-						(*banker).Money -= 10 * (handType(gamers[index]) - handType(*banker))
-						(&gamers[index]).Money += 10 * (handType(gamers[index]) - handType(*banker))
+					} else if handType(*gamers[index]) == 5 {
+						(*banker).Money -= 10 * (handType(*gamers[index]) - handType(*banker))
+						(*gamers[index]).Money += 10 * (handType(*gamers[index]) - handType(*banker))
 					}
 				} else if handType(*banker) == 5 {
-					if handType(gamers[index]) == 1 {
+					if handType(*gamers[index]) == 1 {
 						(*banker).Money += 10 * handType(*banker)
-						(&gamers[index]).Money -= 10 * handType(*banker)
-					} else if handType(gamers[index]) == 2 {
-						(*banker).Money += 10 * (handType(*banker) - handType(gamers[index]))
-						(&gamers[index]).Money -= 10 * (handType(*banker) - handType(gamers[index]))
-					} else if handType(gamers[index]) == 5 {
+						(*gamers[index]).Money -= 10 * handType(*banker)
+					} else if handType(*gamers[index]) == 2 {
+						(*banker).Money += 10 * (handType(*banker) - handType(*gamers[index]))
+						(*gamers[index]).Money -= 10 * (handType(*banker) - handType(*gamers[index]))
+					} else if handType(*gamers[index]) == 5 {
 						continue
 					}
 				}

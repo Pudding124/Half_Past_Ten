@@ -19,10 +19,14 @@ func main() {
 	peopleList = append(peopleList, &people_3)
 
 	Rule.StartGame(peopleList, &banker, deck)
+	for _, p := range peopleList {
+		fmt.Printf("玩家分數: %v", p)
+		fmt.Println()
+	}
 	Rule.JudgeGame(peopleList, &banker)
 
 	fmt.Println()
-	fmt.Printf("最終結果: 莊家 %v: ", banker)
+	fmt.Printf("最終結果: 莊家 %v: ", &banker)
 	fmt.Println()
 	for _, p := range peopleList {
 		fmt.Printf("最終結果: 玩家 %v: ", p)

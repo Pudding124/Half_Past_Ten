@@ -26,29 +26,28 @@ func StartGame(gamers []*People, banker *People, decks Deck.Deck) {
 	(*banker).Rank = decks[deckIndex].Rank
 	(*banker).TotalCard += 1
 	deckIndex += 1
-	for index := range gamers {
-		(*gamers[index]).Rank = decks[deckIndex].Rank
-		(*gamers[index]).TotalCard += 1
+	for _, people := range gamers {
+		(*people).Rank = decks[deckIndex].Rank
+		(*people).TotalCard += 1
 		deckIndex += 1
 	}
 
 	choose := ""
-	for index := range gamers {
-		user := *gamers[index]
-		fmt.Println("Gamer: ", user.Owner)
+	for _, people := range gamers {
+		fmt.Println("Gamer: ", (*people).Owner)
 
 		for true {
-			fmt.Println("分數: ", user.Rank)
+			fmt.Println("分數: ", (*people).Rank)
 			fmt.Print("還要牌嗎? ")
 			fmt.Scanln(&choose)
 
 			if choose == "Y" {
-				user.Rank += decks[deckIndex].Rank
-				(*gamers[index]).TotalCard += 1
+				(*people).Rank += decks[deckIndex].Rank
+				(*people).TotalCard += 1
 				deckIndex += 1
 
-				if isRankExceeded(user.Rank) {
-					fmt.Println("分數: ", user.Rank)
+				if isRankExceeded((*people).Rank) {
+					fmt.Println("分數: ", (*people).Rank)
 					fmt.Println("分數超過了!!")
 					break
 				}
